@@ -87,8 +87,8 @@ class ConfigView(object):
         """
         raise NotImplementedError
 
-    def remove(self, value):
-        """Remove source or value from config
+    def remove(self, obj):
+        """Remove source or key from config
         """
         raise NotImplementedError
 
@@ -469,7 +469,7 @@ class RootView(ConfigView):
         self.sources.append(ConfigSource.of(obj))
 
     def remove(self, obj):
-        """Remove source or item from configuration
+        """Remove source or key from configuration
         """
         if isinstance(obj, ConfigSource):
             if obj.default:
@@ -558,6 +558,11 @@ class Subview(ConfigView):
 
     def add(self, value):
         self.parent.add({self.key: value})
+
+    def remove(self, key):
+        value = self.parent[self.key].get()
+        del value[key]
+        self.set(value)
 
     def root(self):
         return self.parent.root()

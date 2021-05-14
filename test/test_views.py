@@ -292,6 +292,12 @@ class DeleteTest(unittest.TestCase):
             config['foo'].get()
         self.assertEqual(set(config.keys()), set(['qux']))
 
+    def test_nested_remove(self):
+        config = _root({'foo': {'bar': {'x': 'y', 'a': 'b'}, 'qux': 'baz'}})
+        del config['foo']['bar']['x']
+        self.assertEqual(config['foo']['bar'].get(), {'a': 'b'})
+        config['foo']['bar'].remove('a')
+        self.assertEqual(config['foo']['bar'].get(), {})
 
 class BuildNamespaceDictTests(unittest.TestCase):
     def test_pure_dicts(self):

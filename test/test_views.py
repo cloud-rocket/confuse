@@ -276,6 +276,23 @@ class SetTest(unittest.TestCase):
         self.assertEqual(config['foo'][1].get(), 'bar')
 
 
+class DeleteTest(unittest.TestCase):
+
+    def test_remove(self):
+        config = _root({'foo': 'bar', 'qux': 'baz'})
+        config.remove('foo')
+        with self.assertRaises(confuse.NotFoundError):
+            config['foo'].get()
+        self.assertEqual(set(config.keys()), set(['qux']))
+
+    def test_del(self):
+        config = _root({'foo': 'bar', 'qux': 'baz'})
+        del config['foo']
+        with self.assertRaises(confuse.NotFoundError):
+            config['foo'].get()
+        self.assertEqual(set(config.keys()), set(['qux']))
+
+
 class BuildNamespaceDictTests(unittest.TestCase):
     def test_pure_dicts(self):
         config = {'foo': {'bar': 1}}

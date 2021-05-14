@@ -87,6 +87,11 @@ class ConfigView(object):
         """
         raise NotImplementedError
 
+    def remove(self, value):
+        """Remove source or value from config
+        """
+        raise NotImplementedError
+
     def set(self, value):
         """*Override* the value for this configuration view. The
         specified value is added as the highest-priority configuration
@@ -134,6 +139,11 @@ class ConfigView(object):
         view.
         """
         self.set({key: value})
+
+    def __delitem__(self, key):
+        """Remove value from config by key.
+        """
+        self.remove(key)
 
     def __contains__(self, key):
         return self[key].exists()
@@ -457,6 +467,22 @@ class RootView(ConfigView):
 
     def add(self, obj):
         self.sources.append(ConfigSource.of(obj))
+
+    def remove(self, obj):
+        """Remove source or item from configuration
+        """
+        if isinstance(obj, ConfigSource):
+            if obj.default:
+                raise ConfigError(u'Cannot remove default source')
+            self.sources.remove(obj)
+        elif isinstance(obj, util.STRING):
+            for source in self.sources:
+                if isinstance(source, ConfigSource) and obj in source:
+                    del source[obj]
+        else:
+            raise ConfigError(u'Unrecognized obj {0}'.format(
+                obj
+            ))
 
     def set(self, value):
         self.sources.insert(0, ConfigSource.of(value))

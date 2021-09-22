@@ -783,12 +783,12 @@ class PersistentConfig(Configuration):
         super(PersistentConfig, self).add(obj)
 
         with open(self.user_config_path(), 'w') as f:
-            f.write(self.dump().strip())
+            f.write(self.dump(full=False).strip())
 
     def set(self, value):
         super(PersistentConfig, self).set(value)
 
         with open(self.user_config_path(), 'w') as f:
-            f.write(self.dump().strip())
+            f.write(self.dump(full=False).strip())
 
 # "Validated" configuration views: experimental!
